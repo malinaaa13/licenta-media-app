@@ -38,12 +38,12 @@ function Register() {
   };
 
   return (
-    <div className="container-fluid d-flex justify-content-center align-items-center vh-100 bg-light">
+    <div className="container-fluid d-flex justify-content-center align-items-center vh-100 ">
       
       {/* Card container for the form */}
       <div className="card shadow p-4" style={{ width: '100%', maxWidth: '400px', borderRadius: '15px' }}>
         
-        <h2 className="text-center mb-4 text-primary">Create Account</h2>
+        <h2 className="text-center mb-4">Create Account</h2>
         
         <form onSubmit={handleRegister}>
           
@@ -84,7 +84,7 @@ function Register() {
           </div>
 
           {/* Submit Button */}
-          <button type="submit" className="btn btn-primary w-100 fw-bold">
+          <button type="submit" className="btn btn-info w-100 fw-bold">
             Register
           </button>
         </form>
@@ -98,7 +98,7 @@ function Register() {
 
         {/* Link to Login Page */}
         <div className="text-center mt-3">
-          <p className="mb-0">Already have an account? <Link to="/login" className="text-decoration-none">Log in here</Link></p>
+          <p className="mb-0">Already have an account? <Link to="/login" className="text-decoration-none theme-link">Log in here</Link></p>
         </div>
 
       </div>

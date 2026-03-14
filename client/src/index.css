@@ -1,0 +1,41 @@
+/* 1. THE VAULT: Save all your colors here */
+:root {
+    --bg-main: #0a2d35;       /* Your dark teal */
+    --bg-navbar: #051f25;     /* The darker teal for the nav */
+    --bg-card: #3f616d;       /* The lighter teal for cards */
+    --text-primary: rgb(250, 235, 215); /* The warm off-white */
+}
+
+body, #body {
+    background-color: var(--bg-main) !important; 
+    color: var(--text-primary) !important;       
+    margin: 0;
+    min-height: 100vh;
+}
+
+/* 3. YOUR CUSTOM CLASSES: Using the variables */
+.nav-bg {
+    background-color: var(--bg-navbar) !important;
+}
+
+.card {
+    background-color: var(--bg-card) !important;
+    color: var(--text-primary) !important; /* Forces text inside cards to be off-white */
+}
+
+.badge-bag {
+    background-color: var(--text-primary) !important;
+}
+
+/* We don't even need .movie-title-color anymore because the .card 
+rule covers it! */
+
+.theme-link {
+    color: #0dcaf0 !important; /* Matches the Bootstrap 'info' cyan color */
+    font-weight: bold;
+    transition: 0.3s ease; /* Makes the color change smooth */
+}
+
+.theme-link:hover {
+    color: var(--text-primary) !important; /* Changes to your off-white on hover */
+}

@@ -47,10 +47,10 @@ function Login() {
   };
 
   return (
-    <div className="container-fluid d-flex justify-content-center align-items-center vh-100 bg-light">
+    <div className="container-fluid d-flex justify-content-center align-items-center vh-100 ">
       <div className="card shadow p-4" style={{ width: '100%', maxWidth: '400px', borderRadius: '15px' }}>
 
-        <h2 className="text-center mb-4 text-primary">Welcome Back</h2>
+        <h2 className="text-center mb-4 ">Welcome Back</h2>
 
         <form onSubmit={handleLogin}>
           <div className="mb-3">
@@ -77,7 +77,7 @@ function Login() {
             />
           </div>
 
-          <button type="submit" className="btn btn-primary w-100 fw-bold">
+          <button type="submit" className="btn btn-info w-100 fw-bold">
             Log In
           </button>
         </form>
@@ -89,7 +89,7 @@ function Login() {
         )}
 
         <div className="text-center mt-3">
-          <p className="mb-0">Don't have an account? <Link to="/register" className="text-decoration-none">Register here</Link></p>
+          <p className="mb-0">Don't have an account? <Link to="/register" className="text-decoration-none theme-link">Register here</Link></p>
         </div>
       </div>
     </div>
