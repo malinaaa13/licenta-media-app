@@ -13,14 +13,19 @@ const userMediaSchema = new mongoose.Schema({
     },
     status: { 
         type: String, 
-        enum: ["wishlist", "finished", "dropped"], 
-        default: "wishlist" 
+        enum: ["in progress", "save", "finished"], 
+        default: "save" 
     },
     // Review Section
     rating: { type: Number, min: 1, max: 5 }, 
     reviewText: String,
     // Physical Inventory Section
     isPhysical: { type: Boolean, default: false },
+    format: { 
+        type: String, 
+        enum: ["dvd", "blu-ray", "4k", "vhs", "vinyl", "cd", "hardcover", "paperback","none"], 
+        default: "none" 
+    },
     physicalStatus: { 
         type: String, 
         enum: ["available", "loaned", "lost", "none"], 
