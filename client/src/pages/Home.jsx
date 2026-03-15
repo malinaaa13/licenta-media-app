@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 function Home() {
   const [movies, setMovies] = useState([]);
@@ -51,11 +51,13 @@ function Home() {
         <div className="d-flex flex-wrap gap-4 justify-content-center">
           {movies.map((movie) => (
             <div key={movie.id} className="card shadow-sm border-0 card" style={{ width: '200px' }}>
+              <Link to={`/movie/${movie.id}`} className="text-decoration-none">
               <img 
                 src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} 
                 className="card-img-top rounded-top" 
                 alt={movie.title} 
               />
+              </Link>
               <div className="card-body d-flex flex-column">
                 <h6 className="card-title movie-title-color text-truncate" title={movie.title}>
                   {movie.title}

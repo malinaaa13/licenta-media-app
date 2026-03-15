@@ -3,6 +3,7 @@ import Welcome from "./pages/Welcome";
 import Register from './pages/Register';
 import Login from './pages/Login';
 import Home from './pages/Home';
+import MovieDetails from './pages/MovieDetails';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/login" element={<Login />}/>
         
         <Route path="/home" element={<Home/>}></Route>
+        <Route path="/movie/:id" element={<MovieDetails />} />
       </Routes>
     </BrowserRouter>
   );
