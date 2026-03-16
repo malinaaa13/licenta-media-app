@@ -56,6 +56,8 @@ const handleSaveInteraction = async () => {
       return;
     }
 
+    setStatus('finished');
+
     try {
       const response = await axios.post("http://localhost:8080/api/media/update", {
         userId: user.id,
@@ -65,7 +67,7 @@ const handleSaveInteraction = async () => {
         releaseYear: movie.release_date ? parseInt(movie.release_date.split('-')[0]) : null,
         description: movie.overview,
         creator: movie.director, // We send the director we found earlier!
-        status: status || "save", // "in progress", "save", or "finished"
+        status: "finished",
         rating: rating, 
         reviewText: review, // Matches your schema field name
         isPhysical: isPhysical,
@@ -73,7 +75,7 @@ const handleSaveInteraction = async () => {
         physicalStatus: physicalCondition
       });
       
-      alert(response.data.message); 
+      alert("Review posted and movie marked as Finished"); 
     } catch (error) {
       console.error("Error saving data:", error);
       alert("There was an error saving your data.");
@@ -113,8 +115,38 @@ const handleSaveInteraction = async () => {
     }
   };
 
+  const handleRatingUpdate = async (newStarValue) => {
+    if (!user) {
+      alert("Please log in to rate this movie!");
+      return;
+    }
 
-  // NEW: Instantly saves physical media changes to the database
+    // 1. Instantly update the UI for BOTH the stars and the status button
+    setRating(newStarValue);
+    setStatus("finished"); 
+
+    try {
+      await axios.post("http://localhost:8080/api/media/update", {
+        userId: user.id,
+        externalId: movie.id.toString(),
+        title: movie.title,
+        posterPath: movie.poster_path,
+        releaseYear: movie.release_date ? parseInt(movie.release_date.split('-')[0]) : null,
+        description: movie.overview,
+        creator: movie.director,
+        status: "finished", 
+        rating: newStarValue, 
+        reviewText: review,
+        isPhysical: isPhysical,
+        format: physicalFormat,
+        physicalStatus: physicalCondition
+      });
+    } catch (error) {
+      console.error("Error saving rating:", error);
+    }
+  };
+
+  // Instantly saves physical media changes to the database
   const handlePhysicalUpdate = async (field, value) => {
     if (!user) {
       alert("Please log in to manage your physical inventory!");
@@ -235,7 +267,7 @@ const handleSaveInteraction = async () => {
                   {[1, 2, 3, 4, 5].map((star) => (
                     <span 
                       key={star} 
-                      onClick={() => setRating(star)}
+                      onClick={() => handleRatingUpdate(star)}
                       className={star <= rating ? "text-warning" : "text-secondary"}
                     >
                       ★

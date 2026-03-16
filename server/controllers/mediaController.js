@@ -112,4 +112,18 @@ const getUserMedia = async (req, res) => {
     }
 };
 
-module.exports = { getPopularMovies, getMovieDetails, updateUserMedia, getUserMedia};
+const searchMovies = async (req, res) => {
+    try{
+        const {query} = req.params;
+        const apiKey = process.env.TMDB_API_KEY;
+
+        const tmdbResponse = await axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&language=en-US&query=${query}&page=1`);
+
+        res.json(tmdbResponse.data.results);
+    } catch (error){
+        console.error("Error searching movies:", error);
+        res.status(500).json({error: "Couldn't search for movies"});
+    }
+};
+
+module.exports = { getPopularMovies, getMovieDetails, updateUserMedia, getUserMedia, searchMovies};
