@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 function Collections() {
   const [library, setLibrary] = useState([]);
-  const [activeTab, setActiveTab] = useState('finished'); // Default tab
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(location.state?.targetTab || 'finished');
   const [isLoading, setIsLoading] = useState(true);
   
   const user = JSON.parse(localStorage.getItem('user'));
@@ -30,6 +31,12 @@ function Collections() {
 
     fetchLibrary();
   }, [navigate]);
+
+  useEffect(() => {
+    if (location.state?.targetTab) {
+      setActiveTab(location.state.targetTab);
+    }
+  }, [location.state]);
 
   // Filter the library based on the active tab
   const displayedMedia = library.filter(item => item.status === activeTab);
@@ -95,7 +102,7 @@ function Collections() {
                   </h6>
                   {/* Show their personal rating if they have one */}
                   {item.rating > 0 && (
-                    <span className="badge bg-warning text-dark">
+                    <span className="badge bg-info text-dark">
                       ⭐ {item.rating} / 5
                     </span>
                   )}

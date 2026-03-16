@@ -23,7 +23,14 @@ function MovieDetails() {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        // 1. Fetch the general movie details from TMDB
+        setStatus('');
+        setRating(0);
+        setReview('');
+        setIsPhysical(false);
+        setPhysicalFormat('none');
+        setPhysicalCondition('none');
+
+        // Fetch the general movie details from TMDB
         const response = await axios.get(`http://localhost:8080/api/media/movies/${id}`);
         setMovie(response.data);
 
@@ -207,7 +214,7 @@ const handleSaveInteraction = async () => {
                 {movie.release_date?.split('-')[0]}
                 </span>
               <span className="d-flex align-items-center">
-                <IoMdTime text-light/> 
+                <IoMdTime className='text-light'/> 
                 {movie.runtime} min
                 </span>
               <span className="badge badge-bag text-dark">⭐ {movie.vote_average?.toFixed(1)} / 10</span>
