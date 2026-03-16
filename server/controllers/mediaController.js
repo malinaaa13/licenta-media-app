@@ -126,4 +126,17 @@ const searchMovies = async (req, res) => {
     }
 };
 
-module.exports = { getPopularMovies, getMovieDetails, updateUserMedia, getUserMedia, searchMovies};
+const getUserLibrary = async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        const library = await UserMedia.find({ userId: userId }).populate('mediaId');
+        
+        res.status(200).json(library);
+    } catch (error) {
+        console.error("Error fetching user library:", error);
+        res.status(500).json({ message: "Server error while fetching library." });
+    }
+};
+
+module.exports = { getPopularMovies, getMovieDetails, updateUserMedia, getUserMedia, searchMovies, getUserLibrary};

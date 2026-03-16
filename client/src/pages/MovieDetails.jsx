@@ -186,13 +186,6 @@ const handleSaveInteraction = async () => {
 
   return (
     <div>
-      {/* Bara de navigație simplă pentru a ne întoarce */}
-      <nav className="navbar nav-bg px-4 shadow-sm mb-4">
-        <span className="navbar-brand mb-0 h1 fw-bold theme-link" style={{cursor: 'pointer'}} onClick={() => navigate('/home')}>
-          ← Back to Home
-        </span>
-      </nav>
-
       <div className="container pb-5">
         <div className="row mt-4">
           
