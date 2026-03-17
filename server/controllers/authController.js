@@ -11,16 +11,19 @@ const registerUser = async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ message: "This email already exists!" });
         }
-        
+
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
         const newUser = new User({
             username: username,
             email: email,
-            password: hashedPassword
+            password: hashedPassword,
+            profilePicture: user.profilePicture,
+            bio: user.bio,
+            favorites: user.favorites || []
         });
-        
+
         await newUser.save();
         res.status(201).json({ message: "Account created!" });
 
@@ -39,7 +42,7 @@ const loginUser = async (req, res) => {
         if (!user) {
             return res.status(400).json({ message: "Incorrect email or password!" });
         }
-        
+
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ message: "Incorrect email or password!" });
@@ -57,7 +60,10 @@ const loginUser = async (req, res) => {
             user: {
                 id: user._id,
                 username: user.username,
-                email: user.email
+                email: user.email,
+                profilePicture: user.profilePicture,
+                bio: user.bio,
+                favorites: user.favorites || []
             }
         });
     } catch (error) {

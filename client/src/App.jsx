@@ -9,6 +9,7 @@ import Collections from './pages/Collections';
 import Navbar from './components/Navbar';
 import PopularMovies from './pages/PopularMovies';
 import Profile from './pages/Profile';
+import PublicProfile from './pages/PublicProfile';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/collections" element={<Collections />} />
         <Route path="/popular" element={<PopularMovies />} />
         <Route path='/profile' element={<Profile/>}></Route>
+        <Route path="/user/:id" element={<PublicProfile />} />
         
       </Routes>
     </BrowserRouter>

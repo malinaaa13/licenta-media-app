@@ -163,7 +163,7 @@ const getMovieReviews = async (req, res) => {
         const reviews = await UserMedia.find({
             mediaId: media._id,
             reviewText:{$exists: true, $ne:""}
-        }).populate('userId', 'username');
+        }).populate('userId', 'username profilePicture');
 
         res.status(200).json(reviews);
     } catch(error){
