@@ -23,7 +23,26 @@ const userSchema = new mongoose.Schema({
         books: { type: Number, default: 0 },
         movies: { type: Number, default: 0 },
         albums: { type: Number, default: 0 }
-    }
+    },
+    profilePicture: {
+        type: String,
+        default: "https://i.pravatar.cc/150?img=11" // O poză default dacă nu are una
+    },
+    bio: {
+        type: String,
+        default: "I love movies!"
+    },
+    favorites: {
+    type: [
+        {
+            tmdbId: String,
+            title: String,
+            posterPath: String
+        }
+    ],
+    default: []
+}
+
 }, {
     timestamps: true
 });

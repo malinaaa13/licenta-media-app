@@ -8,6 +8,7 @@ import SearchResults from './pages/SearchResults';
 import Collections from './pages/Collections';
 import Navbar from './components/Navbar';
 import PopularMovies from './pages/PopularMovies';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/movie/:id" element={<MovieDetails />} />
         <Route path="/collections" element={<Collections />} />
         <Route path="/popular" element={<PopularMovies />} />
+        <Route path='/profile' element={<Profile/>}></Route>
         
       </Routes>
     </BrowserRouter>

@@ -12,7 +12,6 @@ function Collections() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // If they aren't logged in, kick them back to login
     if (!user) {
       navigate('/login');
       return;
@@ -38,18 +37,28 @@ function Collections() {
     }
   }, [location.state]);
 
-  // Filter the library based on the active tab
+  const handleRemove = async (recordId) => {
+    if(!window.confirm("Are you sure you want to remove this movie from your collection?")) return;
+
+    try{
+      await axios.delete(`http://localhost:8080/api/media/user-media/${recordId}`);
+
+      setLibrary((prevLibrary) => prevLibrary.filter((item) => item._id !== recordId));
+    } catch(error){
+      console.error("Error removing movies:", error);
+      alert("Failed to remove movie.")
+    }
+  }
+
   const displayedMedia = library.filter(item => item.status === activeTab);
 
   if (isLoading) return <h2 className="text-center text-light mt-5">Loading your library...</h2>;
 
   return (
     <div>
-
       <div className="container pb-5">
         <h2 className="text-light fw-bold mb-4">My Collections</h2>
 
-        {/* Bootstrap Tabs Navigation */}
         <ul className="nav nav-pills mb-4 gap-2">
             <li className="nav-item">
             <button 
@@ -75,12 +84,10 @@ function Collections() {
               Saved
             </button>
           </li>
-          {/* We will leave "In Progress" for the Home page, but you could add it here too! */}
         </ul>
 
-        {/* The Grid of Posters */}
         {displayedMedia.length === 0 ? (
-          <h5 className="text-muted mt-4">You don't have any movies in this collection yet.</h5>
+          <h5 className="text-light mt-4">You don't have any movies in this collection yet.</h5>
         ) : (
           <div className="d-flex flex-wrap gap-4 justify-content-start">
             {displayedMedia.map((item) => (
@@ -106,6 +113,23 @@ function Collections() {
                       ⭐ {item.rating} / 5
                     </span>
                   )}
+
+                  <div className="d-flex justify-content-center gap-2 mt-1">
+                    <Link
+                    to={`/movie/${item.mediaId.externalId}`}
+                    className='btn btn-sm btn-outline-info'
+                    style={{fontSize: '0.75rem', padding:'0.2rem 0.5rem'}}
+                    >
+                      Edit
+                    </Link>
+                    <button
+                    onClick={() => handleRemove(item._id)}
+                    className='btn btn-sm btn-outline-danger'
+                    style={{fontSize: '0.75rem', padding: '0.2rem 0.5 rem'}}
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}

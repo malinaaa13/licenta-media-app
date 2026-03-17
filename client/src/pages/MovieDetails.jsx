@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { IoMdTime } from "react-icons/io";
 import { BsHourglassSplit } from "react-icons/bs";
@@ -17,8 +17,29 @@ function MovieDetails() {
   const [isPhysical, setIsPhysical] = useState(false);
   const [physicalFormat, setPhysicalFormat] = useState('none');
   const [physicalCondition, setPhysicalCondition] = useState('none');
+  const [publicReviews, setPublicReviews] = useState([]);
+  const [visibleReviewsCount, setVisibleReviewsCount] = useState(3);
+  const [similarMovies, setSimilarMovies ] = useState([]);
 
   const user = JSON.parse(localStorage.getItem('user'));
+
+const fetchPublicReviews = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/media/movies/${id}/reviews`);
+      setPublicReviews(response.data);
+    } catch (error) {
+      console.error("Error fetching public reviews: ", error);
+    }
+  };
+
+const fetchSimilarMovies = async () => {
+  try {
+    const response = await axios.get(`http://localhost:8080/api/media/movies/${id}/similar`);
+    setSimilarMovies(response.data.slice(0,8));
+  } catch(error) {
+    console.error("Error fetching similar movies: ", error);
+  }
+}
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -42,7 +63,7 @@ function MovieDetails() {
           if (userMediaResponse.data) {
             setStatus(userMediaResponse.data.status || '');
             setRating(userMediaResponse.data.rating || 0);
-            setReview(userMediaResponse.data.reviewText || '');
+            //setReview(userMediaResponse.data.reviewText || '');
             setIsPhysical(userMediaResponse.data.isPhysical || false);
             setPhysicalFormat(userMediaResponse.data.format || 'none');
             setPhysicalCondition(userMediaResponse.data.physicalStatus || 'none');
@@ -54,7 +75,10 @@ function MovieDetails() {
     };
     
     fetchDetails();
-  }, [id]); // Note: We only trigger this when the movie ID changes
+    fetchPublicReviews();
+    fetchSimilarMovies();
+    setVisibleReviewsCount(3);
+  }, [id, user?.id]); // Note: We only trigger this when the movie ID changes
 
 
 const handleSaveInteraction = async () => {
@@ -83,6 +107,8 @@ const handleSaveInteraction = async () => {
       });
       
       alert("Review posted and movie marked as Finished"); 
+      setReview('');
+      fetchPublicReviews();
     } catch (error) {
       console.error("Error saving data:", error);
       alert("There was an error saving your data.");
@@ -348,8 +374,110 @@ const handleSaveInteraction = async () => {
 
         </div>
       </div>
+      {/* --- SECȚIUNEA DE RECENZII PUBLICE --- */}
+      {/* ✨ MODIFICAT: Am adăugat 'row justify-content-center' pentru a centra conținutul */}
+      <div className="mt-5 pt-4 border-top border-secondary row justify-content-center">
+        {/* ✨ MODIFICAT: 'col-lg-8 col-md-10' face caseta de recenzii mult mai îngustă! */}
+        <div className="col-lg-8 col-md-10">
+          <h3 className="text-light fw-bold mb-4 text-left">Public Reviews</h3>
+          
+          {publicReviews.length === 0 ? (
+            <p className="text-muted text-center">No reviews yet. Be the first to review this movie!</p>
+          ) : (
+            <div>
+              <div className="d-flex flex-column gap-3">
+                {publicReviews.slice(0, visibleReviewsCount).map((reviewData) => (
+                  <div key={reviewData._id} className="card bg-dark border-secondary text-light shadow-sm" style={{ fontSize: '0.9rem' }}>
+                    <div className="card-header border-secondary d-flex justify-content-between align-items-center py-2">
+                      <span className="fw-bold text-info" style={{ fontSize: '0.85rem' }}>
+                        👤 {reviewData.userId?.username === user?.username ? "You" : reviewData.userId?.username}
+                      </span>
+                      
+                      {/* ✨ NOU: Grupăm butonul de Edit și Stelele */}
+                      <div className="d-flex align-items-center gap-2">
+                        {/* Dacă recenzia este a utilizatorului logat, arătăm butonul de Edit */}
+                        {reviewData.userId?.username === user?.username && (
+                          <button 
+                            className="btn btn-sm btn-outline-info py-0 px-2"
+                            style={{ fontSize: '0.75rem' }}
+                            onClick={() => {
+                              // Când apasă Edit, punem textul înapoi în casetă și dăm scroll sus
+                              setReview(reviewData.reviewText);
+                              setRating(reviewData.rating);
+                              window.scrollTo({ top: 300, behavior: 'smooth' });
+                            }}
+                          >
+                            ✎ Edit
+                          </button>
+                        )}
+                        
+                        {reviewData.rating > 0 && (
+                          <span className="badge bg-info text-dark" style={{ fontSize: '0.75rem' }}>
+                            ⭐ {reviewData.rating} / 5
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="card-body py-2">
+                      <p className="card-text mb-1" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.4' }}>
+                        {reviewData.reviewText}
+                      </p>
+                      {reviewData.isPhysical && reviewData.format !== 'none' && (
+                        <small className="text-muted d-block mt-1" style={{ fontSize: '0.75rem' }}>
+                          💿 Owns on {reviewData.format.toUpperCase()}
+                        </small>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {visibleReviewsCount < publicReviews.length && (
+                <button 
+                  onClick={() => setVisibleReviewsCount(prev => prev + 3)} 
+                  className="btn btn-outline-secondary btn-sm mt-3 w-100 fw-bold"
+                >
+                  Load More Reviews ({publicReviews.length - visibleReviewsCount} left) ↓
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* --- SECȚIUNEA SIMILAR MOVIES --- */}
+      {similarMovies.length > 0 && (
+        <div className="mt-5 pt-4 border-top border-secondary">
+          <h3 className="text-light fw-bold mb-4 p-4 text-left ">Similar Movies</h3>
+          {/* ✨ MODIFICAT: 'flex-wrap' și 'justify-content-center' le așează pe mijloc, nu pe stânga */}
+          <div className="d-flex flex-wrap justify-content-center gap-4 pb-3">
+            {similarMovies.map((movie) => (
+              movie.poster_path && (
+                <div key={movie.id} className="card shadow-sm border-0 bg-transparent flex-shrink-0" style={{ width: '150px' }}>
+                  <Link to={`/movie/${movie.id}`} className="text-decoration-none">
+                    <img 
+                      src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} 
+                      className="card-img-top rounded shadow" 
+                      alt={movie.title} 
+                      style={{ transition: 'transform 0.2s' }}
+                      onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                      onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                    />
+                  </Link>
+                  <div className="mt-2 text-center">
+                    <h6 className="text-light text-truncate mb-0" style={{ fontSize: '0.85rem' }} title={movie.title}>{movie.title}</h6>
+                    <span className="badge badge-bag text-dark mt-1" style={{ fontSize: '0.75rem' }}>⭐ {movie.vote_average?.toFixed(1)}</span>
+                  </div>
+                </div>
+              )
+            ))}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
+
 
 export default MovieDetails;

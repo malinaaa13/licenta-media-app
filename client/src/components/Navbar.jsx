@@ -14,11 +14,6 @@ function Navbar() {
   const location = useLocation();
   const user = JSON.parse(localStorage.getItem('user'));
 
-  // Hide the navbar entirely if the user is on the Login or Register pages
-  if (location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/') {
-    return null;
-  }
-
   const handleLogout = () => {
     localStorage.removeItem('user');
     navigate('/login');
@@ -44,6 +39,10 @@ function Navbar() {
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
+
+    if (location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/') {
+    return null;
+  }
 
   return (
     <nav className="navbar nav-bg px-4 shadow-sm mb-4 d-flex align-items-center">
@@ -129,11 +128,30 @@ function Navbar() {
             </div>
           )}
         </div>
-
-        {user && <span className="text-light fw-bold">{user.username}</span>}
-        <button onClick={handleLogout} className="btn btn-outline-info btn-sm fw-bold">
-          Log Out
-        </button>
+        {/* User Profile & Logout */}
+        {user && (
+          <div className="d-flex align-items-center gap-3 ms-3 border-start border-secondary ps-3">
+            <Link 
+              to="/profile" 
+              className="text-decoration-none d-flex align-items-center gap-2"
+              style={{ transition: 'opacity 0.2s' }}
+              onMouseOver={(e) => e.currentTarget.style.opacity = '0.8'}
+              onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
+            >
+              <img 
+                src={user.profilePicture || "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg"} 
+                alt="Profile" 
+                className="rounded-circle border border-info bg-white" 
+                style={{ width: '40px', height: '40px', objectFit: 'cover' }} 
+              />
+              <span className="text-light fw-bold">{user.username}</span>
+            </Link>
+            
+            <button onClick={handleLogout} className="btn btn-outline-info btn-sm fw-bold">
+              Log Out
+            </button>
+          </div>
+        )}
       </div>
     </nav>
   );

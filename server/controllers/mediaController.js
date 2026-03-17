@@ -139,4 +139,58 @@ const getUserLibrary = async (req, res) => {
     }
 };
 
-module.exports = { getPopularMovies, getMovieDetails, updateUserMedia, getUserMedia, searchMovies, getUserLibrary};
+const removeUserMedia = async (req, res) => {
+    try{
+        const { recordId } = req.params;
+        await UserMedia.findByIdAndDelete(recordId);
+
+        res.status(200).json({message: "Movie removed from collection. "});
+    } catch (error) {
+        console.error("Error removing media: ", error);
+        res.status(500).json({message: "Server error while removing movie." });
+
+    }
+}
+
+//cauta filmul si toti utilizatorii care au scris o recenzie pentru el
+const getMovieReviews = async (req, res) => {
+    try{
+        const {tmdbId} = req.params;
+        const media = await Media.findOne({externalId: tmdbId });
+        if(!media) {
+            return res.status(200).json([]);
+        }
+        const reviews = await UserMedia.find({
+            mediaId: media._id,
+            reviewText:{$exists: true, $ne:""}
+        }).populate('userId', 'username');
+
+        res.status(200).json(reviews);
+    } catch(error){
+        console.error("Error fetching reviews:", error);
+        res.status(500).json({message: "Server error fetching reviews. "})
+    }
+};
+
+const getSimilarMovies = async ( req, res ) => {
+    try{
+        const { tmdbId } = req.params;
+        const apiKey = process.env.TMDB_API_KEY;
+
+        let response = await axios.get(`https://api.themoviedb.org/3/movie/${tmdbId}/recommendations?api_key=${apiKey}`);
+        if (response.data.results.length === 0) {
+            response = await axios.get(`https://api.themoviedb.org/3/movie/${tmdbId}/similar?api_key=${apiKey}`);
+        }
+
+        res.status(200).json(response.data.results);
+    } catch (error) {
+        console.error("Error fetching similar movies:", error);
+        res.status(500).json({ message: "Server error fetching similar movies."});
+
+    }
+};
+
+
+module.exports = { getPopularMovies, getMovieDetails, 
+    updateUserMedia, getUserMedia, searchMovies, getUserLibrary,
+    removeUserMedia, getMovieReviews, getSimilarMovies};
