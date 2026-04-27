@@ -171,52 +171,77 @@ const getFriendshipStatus = async (req, res) => {
     }
 };
 
+// 8. Get Friend Activity Feed
 const getFriendFeed = async (req, res) => {
     try {
         const { userId } = req.params;
 
-        // 1. Get friend IDs
+        // 1. Find friends and map their data
         const friendships = await Friendship.find({
             $or: [{ requester: userId }, { recipient: userId }],
             status: 'accepted'
-        });
+        }).populate('requester recipient', 'username profilePicture');
 
-        const friendIds = friendships.map(f => 
-            f.requester.toString() === userId ? f.recipient.toString() : f.requester.toString()
-        );
+        const friendIds = [];
+        const friendMap = {};
+
+        friendships.forEach(f => {
+            const friend = f.requester._id.toString() === userId ? f.recipient : f.requester;
+            friendIds.push(friend._id);
+            friendMap[friend._id.toString()] = friend;
+        });
 
         if (friendIds.length === 0) return res.status(200).json([]);
 
-        let feed = [];
-
-        // 2. Fetch UserMedia Updates (Finished, In Progress, Saved/Plan to Watch)
+        // 2. FETCH MOVIES AND REVIEWS (from UserMedia)
+        // Notice we are now strictly using 'userId' and the exact lowercase enums
         const recentMedia = await UserMedia.find({ 
-            user: { $in: friendIds },
-            status: { $in: ['Finished', 'In Progress', 'Saved', 'Plan to Watch'] } 
+            userId: { $in: friendIds },
+            status: { $in: ['in progress', 'save', 'finished'] } 
         })
-        .populate('user', 'username profilePicture')
+        .populate('userId', 'username profilePicture')
+        .populate('mediaId') // Populates the movie title and poster
         .sort({ updatedAt: -1 })
-        .limit(15);
+        .limit(20);
 
-        const mediaFeed = recentMedia.map(item => {
-            let actionText = '';
-            if (item.status === 'Finished') actionText = 'finished watching';
-            else if (item.status === 'In Progress') actionText = 'is currently watching';
-            else actionText = 'wants to watch';
+        const mediaAndReviewFeed = [];
 
-            return {
-                id: item._id.toString() + '-media',
-                type: 'userMedia',
-                action: actionText,
-                user: item.user,
-                mediaTitle: item.mediaId?.title || "a movie", 
-                posterPath: item.mediaId?.posterPath,
-                tmdbId: item.mediaId?.externalId,
-                date: item.updatedAt
-            };
+        recentMedia.forEach(item => {
+            // Check if the user left a review for this movie
+            if (item.reviewText || item.rating) {
+                mediaAndReviewFeed.push({
+                    id: item._id.toString() + '-review',
+                    type: 'review',
+                    action: 'reviewed',
+                    user: item.userId,
+                    mediaTitle: item.mediaId?.title || "a movie",
+                    posterPath: item.mediaId?.posterPath,
+                    tmdbId: item.mediaId?.externalId,
+                    rating: item.rating,
+                    text: item.reviewText,
+                    date: item.updatedAt
+                });
+            } else {
+                // Standard status update if there is no review attached
+                let actionText = '';
+                if (item.status === 'finished') actionText = 'finished watching';
+                else if (item.status === 'in progress') actionText = 'is currently watching';
+                else actionText = 'saved the movie';
+
+                mediaAndReviewFeed.push({
+                    id: item._id.toString() + '-media',
+                    type: 'userMedia',
+                    action: actionText,
+                    user: item.userId, // Maps the user data correctly
+                    mediaTitle: item.mediaId?.title || "a movie",
+                    posterPath: item.mediaId?.posterPath,
+                    tmdbId: item.mediaId?.externalId,
+                    date: item.updatedAt
+                });
+            }
         });
 
-        // 3. Fetch Created Lists
+        // 3. FETCH CREATED LISTS
         const recentLists = await List.find({
             creator: { $in: friendIds },
             visibility: 'public'
@@ -236,63 +261,38 @@ const getFriendFeed = async (req, res) => {
             date: list.createdAt
         }));
 
-        // 4. Fetch Saved Lists (Lists where savedBy includes a friend)
+        // 4. FETCH SAVED LISTS
         const savedLists = await List.find({
             savedBy: { $in: friendIds },
             visibility: 'public'
-        })
-        .populate('creator', 'username profilePicture') // We also need to know who made it
-        .limit(10);
+        }).limit(10);
 
-        // We have to figure out WHICH friend saved it to display it properly
         const savedListFeed = [];
         savedLists.forEach(list => {
             friendIds.forEach(friendId => {
-                if (list.savedBy.includes(friendId)) {
-                    // We need to fetch the friend's user data to display their avatar (basic mock here)
+                if (list.savedBy.some(id => id.toString() === friendId.toString())) {
                     savedListFeed.push({
-                        id: list._id.toString() + friendId + '-saved',
+                        id: list._id.toString() + friendId.toString() + '-saved',
                         type: 'saved_list',
                         action: 'saved the list',
-                        user: { _id: friendId, username: 'yourfriend' }, // We'll handle exact name in UI
+                        user: friendMap[friendId.toString()],
                         listTitle: list.title,
                         listId: list._id,
-                        date: list.updatedAt // Approximate time they saved it
+                        date: list.updatedAt
                     });
                 }
             });
         });
 
-        // 5. Fetch Reviews
-        const recentReviews = await Review.find({
-            user: { $in: friendIds }
-        })
-        .populate('user', 'username profilePicture')
-        .sort({ createdAt: -1 })
-        .limit(15);
-
-        const reviewFeed = recentReviews.map(review => ({
-            id: review._id.toString() + '-review',
-            type: 'review',
-            action: 'reviewed',
-            user: review.user,
-            mediaTitle: review.movieTitle,
-            posterPath: review.posterPath,
-            tmdbId: review.tmdbId,
-            rating: review.rating,
-            text: review.text,
-            date: review.createdAt
-        }));
-
-        // 6. Merge & Sort everything by date
-        feed = [...mediaFeed, ...listFeed, ...savedListFeed, ...reviewFeed];
+        // 5. MERGE AND SORT EVERYTHING
+        const feed = [...mediaAndReviewFeed, ...listFeed, ...savedListFeed];
         feed.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-        res.status(200).json(feed.slice(0, 30));
+        res.status(200).json(feed.slice(0, 40));
 
     } catch (error) {
-        console.error("Error fetching friend feed:", error);
-        res.status(500).json({ message: "Server error generating feed" });
+        console.error("Error generating feed:", error);
+        res.status(500).json({ message: "Server error" });
     }
 };
 
