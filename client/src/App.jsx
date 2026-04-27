@@ -10,6 +10,11 @@ import Navbar from './components/Navbar';
 import PopularMovies from './pages/PopularMovies';
 import Profile from './pages/Profile';
 import PublicProfile from './pages/PublicProfile';
+import Lists from './pages/Lists';
+import CreateList from './pages/CreateList';
+import ListDetails from './pages/ListDetails';
+import EditList from './pages/EditList';
+import Friends from './pages/Friends';
 
 function App() {
   return (
@@ -28,7 +33,11 @@ function App() {
         <Route path="/popular" element={<PopularMovies />} />
         <Route path='/profile' element={<Profile/>}></Route>
         <Route path="/user/:id" element={<PublicProfile />} />
-        
+        <Route path="/lists" element={<Lists />} />
+        <Route path="/lists/create" element={<CreateList />} />
+        <Route path="/list/:listId" element={<ListDetails />} />
+        <Route path="/lists/edit/:listId" element={<EditList />} />
+        <Route path="/friends" element={<Friends />} />
       </Routes>
     </BrowserRouter>
   );

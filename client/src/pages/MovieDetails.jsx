@@ -389,8 +389,6 @@ const handleSaveInteraction = async () => {
                 {publicReviews.slice(0, visibleReviewsCount).map((reviewData) => (
                   <div key={reviewData._id} className="card bg-dark border-secondary text-light shadow-sm" style={{ fontSize: '0.9rem' }}>
                     <div className="card-header border-secondary d-flex justify-content-between align-items-center py-2">
-                      {/* ✨ NOU: Imaginea și numele sunt acum un Link către profil */}
-                    {/* Dacă e recenzia ta, te duce la /profile, altfel te duce la /user/ID-ul-lui */}
                     <Link 
                       to={reviewData.userId?.username === user?.username ? "/profile" : `/user/${reviewData.userId?._id}`} 
                       className="text-decoration-none d-flex align-items-center gap-2"
@@ -409,7 +407,6 @@ const handleSaveInteraction = async () => {
                       </span>
                     </Link>
                       
-                      {/* ✨ NOU: Grupăm butonul de Edit și Stelele */}
                       <div className="d-flex align-items-center gap-2">
                         {/* Dacă recenzia este a utilizatorului logat, arătăm butonul de Edit */}
                         {reviewData.userId?.username === user?.username && (

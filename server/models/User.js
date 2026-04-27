@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
     },
     profilePicture: {
         type: String,
-        default: "https://i.pravatar.cc/150?img=11" // O poză default dacă nu are una
+        default: "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg" // O poză default dacă nu are una
     },
     bio: {
         type: String,

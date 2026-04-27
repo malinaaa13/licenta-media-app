@@ -2,7 +2,6 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// Register a new user
 const registerUser = async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -15,13 +14,15 @@ const registerUser = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
+        // Format the username to be lowercase and without spaces
+        const formattedUsername = username.toLowerCase().replace(/\s+/g, '');
+
+        // Create the new user. 
+        // We only pass the essentials. Mongoose will auto-fill the bio, profile picture, and favorites!
         const newUser = new User({
-            username: username,
+            username: formattedUsername,
             email: email,
-            password: hashedPassword,
-            profilePicture: user.profilePicture,
-            bio: user.bio,
-            favorites: user.favorites || []
+            password: hashedPassword
         });
 
         await newUser.save();

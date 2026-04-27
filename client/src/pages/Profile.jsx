@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import { FaEye, FaClock, FaListUl, FaBookmark, FaUsers } from 'react-icons/fa';
 
 // ✨ NOU: Avatarul clasic, standard (silueta gri)
 const DEFAULT_AVATAR = "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg";
@@ -22,6 +23,7 @@ function Profile() {
   const [activeSlot, setActiveSlot] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [stats, setStats] = useState(null);
 
   useEffect(() => {
     if (!user) navigate('/login');
@@ -43,6 +45,21 @@ function Profile() {
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      if (!user?.id) return;
+
+      try {
+        const response = await axios.get(`http://localhost:8080/api/users/${user.id}/stats`);
+        setStats(response.data);
+      } catch (error) {
+        console.error("Error fetching profile stats:", error);
+      }
+    };
+
+    fetchStats();
+  }, [user?.id]);
 
   // ✨ NOU: Funcția care procesează imaginea încărcată
   const handleImageUpload = (e) => {
@@ -80,6 +97,14 @@ function Profile() {
     newFavs[index] = null;
     setEditFavorites(newFavs);
   };
+
+  const statCards = [
+    { key: 'totalWatched', label: 'Watched', value: stats?.totalWatched ?? 0, icon: FaEye },
+    { key: 'totalInProgress', label: 'In Progress', value: stats?.totalInProgress ?? 0, icon: FaClock },
+    { key: 'totalListsCreated', label: 'Lists Created', value: stats?.totalListsCreated ?? 0, icon: FaListUl },
+    { key: 'totalSavedLists', label: 'Saved Lists', value: stats?.totalSavedLists ?? 0, icon: FaBookmark },
+    { key: 'totalFriends', label: 'Friends', value: stats?.totalFriends ?? 0, icon: FaUsers },
+  ];
 
   const handleSaveProfile = async () => {
     try {
@@ -122,7 +147,7 @@ function Profile() {
 
               <div className="flex-grow-1 w-100 text-center text-md-start">
                 <h2 className="fw-bold text-info mb-1">@{user.username}</h2>
-                <p className="text-muted small mb-3">Cinephile</p>
+                
 
                 {!isEditing ? (
                   <>
@@ -202,6 +227,19 @@ function Profile() {
                     {isEditing ? <span className="fs-1 text-secondary">+</span> : <span className="text-secondary">Empty</span>}
                   </div>
                 )}
+              </div>
+            ))}
+          </div>
+
+          <h3 className="text-light fw-bold mb-4 border-bottom border-secondary pb-2">User Statistics</h3>
+          <div className="row row-cols-2 row-cols-md-5 g-3 mb-5">
+            {statCards.map(({ key, label, value, icon: Icon }) => (
+              <div className="col" key={key}>
+                <div className="card bg-dark border-secondary shadow-sm text-center p-3 h-100">
+                  <div className="text-info mb-2 fs-4"><Icon /></div>
+                  <div className="fs-3 fw-bold text-info">{value}</div>
+                  <div className="text-light small text-uppercase opacity-75">{label}</div>
+                </div>
               </div>
             ))}
           </div>

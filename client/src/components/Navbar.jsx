@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { FaSearch } from 'react-icons/fa';
 import { PiStarFourDuotone } from "react-icons/pi";
+import NotificationDropdown from './NotificationDropdown';
 
 function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -55,6 +56,8 @@ function Navbar() {
       <div className="d-flex align-items-center gap-4">
         <Link to="/home" className="text-light text-decoration-none fw-bold fs-5 theme-link">Home</Link>
         <Link to="/collections" className="text-light text-decoration-none fw-bold fs-5 theme-link">Collections</Link>
+        <Link to="/lists" className="text-light text-decoration-none fw-bold fs-5 theme-link">Lists</Link>
+        <Link to="/friends" className="text-light text-decoration-none fw-bold fs-5 theme-link">Friends</Link>
       </div>
 
       {/* Search and User Info on the Right */}
@@ -146,6 +149,7 @@ function Navbar() {
               />
               <span className="text-light fw-bold">{user.username}</span>
             </Link>
+            <NotificationDropdown />
             
             <button onClick={handleLogout} className="btn btn-outline-info btn-sm fw-bold">
               Log Out
