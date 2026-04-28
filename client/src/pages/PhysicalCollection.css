@@ -1,0 +1,483 @@
+/* ═══════════════════════════════════════════════════════════════
+   PhysicalCollection.css  –  Dark Theme Spines & Layout
+   ═══════════════════════════════════════════════════════════════ */
+
+.pc-page {
+  min-height: 100vh;
+  background: #0a2d35;
+  color: #e8e8f0;
+  padding-bottom: 3rem;
+}
+
+.pc-stats-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.pc-stat-card {
+  flex: 1 1 140px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  text-align: center;
+  backdrop-filter: blur(8px);
+}
+
+.pc-stat-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #00c8ff;
+  line-height: 1.1;
+}
+
+.pc-stat-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6c8b99;
+  margin-top: 0.25rem;
+}
+
+.pc-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding: 0.85rem 1.25rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+}
+
+/* Forțează elementele native de UI (dropdown, scroll) să fie în dark mode */
+.pc-toolbar select,
+.pc-modal select,
+.pc-search-wrapper input {
+  color-scheme: dark;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e8e8f0;
+  border-radius: 6px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.875rem;
+}
+
+.pc-toolbar select option,
+.pc-modal select option {
+  background-color: #0a2d35 !important;
+  color: #e8e8f0 !important;
+}
+
+/* ── VERTICAL SHELVES (Dark Theme) ─────────────────────────────── */
+.pc-shelves-column {
+  display: flex;
+  flex-direction: column;
+  gap: 3.5rem;
+  /* Spațiu mai mare între rafturi */
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.pc-shelf-row {
+  position: relative;
+}
+
+.pc-shelf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.pc-shelf-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #6c8b99;
+}
+
+/* Rafturi fixe, fără scroll, care coboară pe mai multe rânduri dacă sunt pline */
+.pc-shelf-surface {
+  position: relative;
+  min-height: 185px;
+  /* Înălțime crescută */
+  height: auto;
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  padding: 1.5rem 1rem 0 1rem;
+  background: linear-gradient(180deg, #11343d 0%, #0a2229 100%);
+  border-radius: 8px 8px 0 0;
+  border: 1px solid rgba(0, 200, 255, 0.08);
+  overflow: visible;
+  /* Fără tăierea cardurilor de hover */
+  flex-wrap: wrap;
+  /* Elementele trec pe rândul următor în loc să facă scroll */
+}
+
+.pc-shelf-surface::after {
+  content: '';
+  position: absolute;
+  bottom: -14px;
+  left: -1px;
+  right: -1px;
+  height: 14px;
+  background: linear-gradient(180deg, #071b21 0%, #030d10 100%);
+  border-radius: 0 0 6px 6px;
+  border-top: 2px solid rgba(0, 200, 255, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  z-index: 5;
+}
+
+.pc-shelf-surface--over {
+  outline: 2px dashed rgba(0, 200, 255, 0.4);
+  outline-offset: 2px;
+}
+
+.pc-shelf-empty {
+  width: 100%;
+  text-align: center;
+  font-size: 0.75rem;
+  color: rgba(108, 139, 153, 0.5);
+  padding: 1.5rem 0 1.5rem;
+  pointer-events: none;
+}
+
+.pc-add-shelf-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 1000px;
+  margin: 2rem auto 0;
+  padding: 0.75rem;
+  background: rgba(0, 200, 255, 0.05);
+  border: 1px dashed rgba(0, 200, 255, 0.3);
+  border-radius: 8px;
+  color: #00c8ff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pc-add-shelf-btn:hover {
+  background: rgba(0, 200, 255, 0.1);
+  border-color: #00c8ff;
+}
+
+/* ── SPINE CARDS ───────────────────────────────────────────────── */
+.pc-spine-wrapper {
+  position: relative;
+  flex-shrink: 0;
+  height: 130px;
+  width: 44px;
+  cursor: grab;
+  z-index: 10;
+}
+
+/* Aceasta forțează cotorul la care dai hover să vină peste absolut toate celelalte cotoare */
+.pc-spine-wrapper:hover {
+  z-index: 1000 !important;
+}
+
+.pc-spine-wrapper:active {
+  cursor: grabbing;
+}
+
+.pc-spine {
+  width: 100%;
+  height: 100%;
+  border-radius: 3px 0 0 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  transition: box-shadow 0.2s;
+  overflow: hidden;
+}
+
+.pc-spine-wrapper:hover .pc-spine {
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.pc-spine-title {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+  text-align: center;
+  padding: 4px 2px;
+  max-height: 90%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+/* ── HOVER CARD (Right Pop-out) ────────────────────────────────── */
+.pc-hover-card {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  margin-left: 6px;
+  display: flex;
+  flex-direction: row;
+  height: 130px;
+  width: auto;
+  max-width: 240px;
+  background: #0d2127;
+  border: 1px solid rgba(0, 200, 255, 0.15);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.9);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  transform: scale(0.95);
+  z-index: 1000;
+}
+
+.pc-spine-wrapper:hover .pc-hover-card {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.pc-hover-card-poster {
+  flex-shrink: 0;
+  height: 100%;
+  aspect-ratio: 2 / 3;
+  background: #06181d;
+}
+
+.pc-hover-card-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pc-hover-card-body {
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-width: 100px;
+  max-width: 140px;
+}
+
+.pc-hover-card-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #e8e8f0;
+  line-height: 1.2;
+  white-space: normal;
+}
+
+.pc-drag-ghost {
+  opacity: 0.8;
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+  border-radius: 3px;
+  width: 44px;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── MODALS ────────────────────────────────────────────────────── */
+.pc-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 18, 22, 0.85);
+  backdrop-filter: blur(5px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.pc-modal {
+  background: #0d2127;
+  border: 1px solid rgba(0, 200, 255, 0.15);
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.9);
+}
+
+.pc-modal h5 {
+  color: #e8e8f0;
+  font-weight: 700;
+}
+
+.pc-modal label {
+  font-size: 0.75rem;
+  color: #6c8b99;
+}
+
+.pc-modal select,
+.pc-modal input {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e8e8f0;
+  border-radius: 6px;
+  padding: 0.4rem 0.75rem;
+  width: 100%;
+}
+
+.pc-modal select:focus,
+.pc-modal input:focus {
+  outline: none;
+  border-color: #00c8ff;
+}
+
+.pc-search-wrapper {
+  position: relative;
+  overflow: visible;
+}
+
+.pc-search-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  background: #0d2127;
+  border: 1px solid rgba(0, 200, 255, 0.2);
+  border-radius: 8px;
+  z-index: 9999;
+  max-height: 250px;
+  overflow-y: auto;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
+}
+
+.pc-search-result {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pc-search-result:hover {
+  background: rgba(0, 200, 255, 0.1);
+}
+
+.pc-search-result img {
+  width: 36px;
+  height: 54px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* ── TABLE OVERRIDE (Dark Theme) ───────────────────────────────── */
+.pc-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  background: transparent;
+}
+
+.pc-table thead th {
+  background: rgba(0, 200, 255, 0.05) !important;
+  color: #00c8ff;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(0, 200, 255, 0.15) !important;
+  border-top: none !important;
+  padding: 0.75rem 1rem;
+}
+
+.pc-table tbody tr {
+  transition: background 0.15s;
+}
+
+/* Forțează fundalul tematicii pe celulele tabelului */
+.pc-table tbody td {
+  background-color: #0d2127 !important;
+  vertical-align: middle;
+  border-color: rgba(255, 255, 255, 0.03) !important;
+  color: #d0d0e0;
+  padding: 0.6rem 1rem;
+}
+
+.pc-table tbody tr:hover td {
+  background-color: rgba(0, 200, 255, 0.05) !important;
+}
+
+.pc-title-link {
+  color: #e8e8f0;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.pc-title-link:hover {
+  color: #00c8ff;
+}
+
+/* Badges */
+.badge-format-dvd {
+  background: #7c3aed;
+}
+
+.badge-format-blu-ray {
+  background: #2563eb;
+}
+
+.badge-format-4k {
+  background: #0284c7;
+}
+
+.badge-format-vhs {
+  background: #64748b;
+}
+
+.badge-format-vinyl {
+  background: #374151;
+  border: 1px solid #555;
+}
+
+.badge-format-cd {
+  background: #475569;
+}
+
+.badge-format-hardcover {
+  background: #92400e;
+}
+
+.badge-format-paperback {
+  background: #b45309;
+}
+
+.badge-format-none {
+  background: #374151;
+}
+
+.badge-status-available {
+  background: #16a34a;
+}
+
+.badge-status-loaned {
+  background: #d97706;
+}
+
+.badge-status-lost {
+  background: #dc2626;
+}
+
+.badge-status-none {
+  background: #374151;
+}

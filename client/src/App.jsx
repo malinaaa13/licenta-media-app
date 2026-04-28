@@ -16,23 +16,24 @@ import ListDetails from './pages/ListDetails';
 import EditList from './pages/EditList';
 import Friends from './pages/Friends';
 import ActivityFeed from './pages/ActivityFeed';
+import PhysicalCollection from './pages/PhysicalCollection';
 
 function App() {
   return (
     <BrowserRouter>
-    <Navbar />
+      <Navbar />
       <Routes>
-        <Route path="/" element={<Welcome/>}></Route>
+        <Route path="/" element={<Welcome />}></Route>
 
         <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />}/>
-        
-        <Route path="/home" element={<Home/>}></Route>
+        <Route path="/login" element={<Login />} />
+
+        <Route path="/home" element={<Home />}></Route>
         <Route path="/search/:query" element={<SearchResults />} />
         <Route path="/movie/:id" element={<MovieDetails />} />
         <Route path="/collections" element={<Collections />} />
         <Route path="/popular" element={<PopularMovies />} />
-        <Route path='/profile' element={<Profile/>}></Route>
+        <Route path='/profile' element={<Profile />}></Route>
         <Route path="/user/:id" element={<PublicProfile />} />
         <Route path="/lists" element={<Lists />} />
         <Route path="/lists/create" element={<CreateList />} />
@@ -40,6 +41,7 @@ function App() {
         <Route path="/lists/edit/:listId" element={<EditList />} />
         <Route path="/friends" element={<Friends />} />
         <Route path="/activity" element={<ActivityFeed />} />
+        <Route path="/shelf" element={<PhysicalCollection />} />
       </Routes>
     </BrowserRouter>
   );

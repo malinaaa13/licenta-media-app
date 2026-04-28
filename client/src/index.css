@@ -1,14 +1,19 @@
 /* 1. THE VAULT: Save all your colors here */
 :root {
-    --bg-main: #0a2d35;       /* Your dark teal */
-    --bg-navbar: #051f25;     /* The darker teal for the nav */
-    --bg-card: #3f616d;       /* The lighter teal for cards */
-    --text-primary: rgb(250, 235, 215); /* The warm off-white */
+    --bg-main: #0a2d35;
+    /* Your dark teal */
+    --bg-navbar: #051f25;
+    /* The darker teal for the nav */
+    --bg-card: #3f616d;
+    /* The lighter teal for cards */
+    --text-primary: rgb(250, 235, 215);
+    /* The warm off-white */
 }
 
-body, #body {
-    background-color: var(--bg-main) !important; 
-    color: var(--text-primary) !important;       
+body,
+#body {
+    background-color: var(--bg-main) !important;
+    color: var(--text-primary) !important;
     margin: 0;
     min-height: 100vh;
 }
@@ -20,7 +25,8 @@ body, #body {
 
 .card {
     background-color: var(--bg-card) !important;
-    color: var(--text-primary) !important; /* Forces text inside cards to be off-white */
+    color: var(--text-primary) !important;
+    /* Forces text inside cards to be off-white */
 }
 
 .badge-bag {
@@ -31,11 +37,114 @@ body, #body {
 rule covers it! */
 
 .theme-link {
-    color: #0dcaf0 !important; /* Matches the Bootstrap 'info' cyan color */
+    color: #0dcaf0 !important;
+    /* Matches the Bootstrap 'info' cyan color */
     font-weight: bold;
-    transition: 0.3s ease; /* Makes the color change smooth */
+    transition: 0.3s ease;
+    /* Makes the color change smooth */
 }
 
 .theme-link:hover {
-    color: var(--text-primary) !important; /* Changes to your off-white on hover */
+    color: var(--text-primary) !important;
+    /* Changes to your off-white on hover */
+}
+
+/* --- Physical Collection Page Wrapper --- */
+.physical-collection-page {
+    background-color: #0a2d35;
+    min-height: 100vh;
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+}
+
+/* --- Bookcase styling --- */
+.bookcase {
+    background: rgba(230, 200, 150, 0.85);
+    border: 10px solid #80582c;
+    border-radius: 8px;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.shelf-section {
+    margin-bottom: 50px;
+    position: relative;
+}
+
+.shelf-section h2 {
+    margin-bottom: 10px;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.15);
+    padding-bottom: 5px;
+    font-size: 1.2rem;
+    color: #3b2a0b;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Books aligned on shelf */
+.shelf {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    position: relative;
+    padding: 10px;
+    min-height: 180px;
+    /* Gives space so you can drop items on an empty shelf */
+}
+
+.book {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease;
+    text-align: center;
+    cursor: grab;
+    width: 100px;
+    position: relative;
+}
+
+.book:active {
+    cursor: grabbing;
+}
+
+.book img {
+    width: 100px;
+    height: 150px;
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    margin-bottom: 8px;
+    object-fit: cover;
+}
+
+.book:hover {
+    transform: translateY(-6px);
+}
+
+.book p {
+    font-size: 0.8rem;
+    color: #3b2a0b;
+    margin: 0;
+    line-height: 1.2;
+    font-weight: bold;
+}
+
+/* --- Shelf board directly under books --- */
+.wood-shelf {
+    height: 14px;
+    background: linear-gradient(to bottom, #b38345 0%, #80582c 100%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    border-radius: 0 0 8px 8px;
+    margin-top: -5px;
+}
+
+/* Modal Overlay to ensure it sits above everything */
+.modal-backdrop.show {
+    z-index: 1040;
+}
+
+.modal {
+    z-index: 1050;
 }
