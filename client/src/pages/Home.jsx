@@ -96,8 +96,13 @@ function Home() {
       )}
 
       <div className="mt-5 mb-5">
-        <h3 className="text-light fw-bold mb-4 border-bottom border-secondary pb-2">Friend Activity</h3>
-        
+        <div className="d-flex justify-content-between align-items-end mb-4 border-bottom border-secondary pb-2">
+          <h3 className="text-light fw-bold mb-4 border-bottom border-secondary pb-2">Friend Activity</h3>
+          <Link to="/activity" className="text-info text-decoration-none small fw-bold">
+            See More &rarr;
+          </Link>
+        </div>
+
         {isLoadingFeed ? (
           <div className="card bg-dark border-secondary p-4 text-center">
             <div className="spinner-border text-info mb-3 mt-2" role="status"></div>
@@ -109,7 +114,7 @@ function Home() {
           </div>
         ) : (
           <div className="d-flex flex-column gap-3">
-            {friendFeed.map((activity) => {
+            {friendFeed.slice(0,10).map((activity) => {
               return (
                 <div key={activity.id} className="card bg-dark border-secondary p-3 shadow-sm">
                   <div className="d-flex align-items-start gap-3">
